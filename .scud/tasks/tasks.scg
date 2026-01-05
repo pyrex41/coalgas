@@ -1,0 +1,67 @@
+# SCUD Graph v1
+# Phase: research
+
+@meta {
+  name research
+  updated 2026-01-05T04:36:39.354209+00:00
+}
+
+@nodes
+# id | title | status | complexity | priority
+1 | Set up local directory structure | D | 1 | H
+2 | Download Major Coals Dataset | D | 2 | H
+3 | Download Minor Coals Dataset | D | 2 | H
+4 | Convert drill hole datasets to clean CSV | D | 3 | H
+5 | Install GDAL for shapefile processing | D | 2 | H
+6 | Download coal seam shapefiles | D | 3 | H
+7 | Extract and convert shapefiles to CSV | X | 5 | H
+7.1 | Extract ZIPs and inspect shapefile layers | D | 2 | H
+7.2 | Convert shapefiles to CSV and verify outputs | D | 3 | H
+8 | Filter datasets to study area | D | 3 | H
+9 | Generate summary statistics | D | 3 | H
+10 | Download reference PDFs | P | 3 | M
+
+@edges
+# dependent -> dependency
+2 -> 1
+3 -> 1
+4 -> 2
+4 -> 3
+6 -> 1
+7 -> 5
+7 -> 6
+7.2 -> 7.1
+8 -> 4
+8 -> 7
+9 -> 8
+10 -> 1
+
+@parents
+# parent: subtasks...
+7: 7.1, 7.2
+
+@details
+1 | description |
+  Create the required directory structure for storing downloaded files, CSV outputs, shapefiles, and reference PDFs as specified. This ensures organized data management throughout the project. Verify that directories are created successfully and accessible.
+2 | description |
+  Download the ZIP file containing the 58,000+ drill hole dataset for major coals from the ILMINES Wiki. Extract the contents to the downloads directory. Confirm the download completes without errors and the file size matches expectations.
+3 | description |
+  Download the ZIP file containing the 12,000+ drill hole dataset for minor coals from the ILMINES Wiki. Extract the contents to the downloads directory. Verify extraction succeeds and row counts align with expectations.
+4 | description |
+  Convert the downloaded ASCII/Excel files for major and minor coals into clean CSV format using tools like csvkit or Python. Handle different delimiters if needed. Ensure CSV files load correctly with lat/lon and depth/thickness columns.
+5 | description |
+  Install GDAL (ogr2ogr) if not already present on the system, using package managers like brew or apt. Verify installation by checking the version. This is required for converting shapefiles to CSV.
+6 | description |
+  Download ZIP files for Herrin, Springfield, Danville, Colchester, and Seelyville coal shapefiles from the ILMINES Wiki. Also download the counties.zip shapefile for use in filtering to study area counties. Confirm all 6 ZIP files download successfully.
+7 | description |
+  Extract the downloaded shapefile ZIPs and use ogr2ogr to convert each coal seam shapefile to CSV format with lat/lon coordinates. Inspect layers and adjust SQL queries as needed. Verify CSV outputs contain depth/thickness data.
+7.1 | description |
+  Extract the downloaded shapefile ZIPs and use ogr2ogr to inspect the layers in each coal seam shapefile, identifying available attributes and structure.
+7.2 | description |
+  Use ogr2ogr to convert each coal seam shapefile to CSV format with lat/lon coordinates, adjusting SQL queries as needed based on inspection results. Verify that the CSV outputs contain the required depth/thickness data.
+8 | description |
+  Run the Python script to filter all CSV datasets (drill holes and shapefile conversions) to the six counties (Crawford, Clark, Lawrence, Jasper, Cumberland, Richland). Use county names or bounding box as fallback. Ensure filtered files have reasonable record counts.
+9 | description |
+  Execute the Python script to generate summary statistics for each coal seam, including depth/thickness ranges and record counts by county. Create the combined CSV file for all seams. Review outputs for reasonableness and data quality.
+10 | description |
+  Download optional PDF mine maps and depth maps for the study counties from the ILMINES Wiki for visual reference. Store them in the reference-pdfs directory. Verify files download correctly and are viewable.

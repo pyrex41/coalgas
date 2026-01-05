@@ -1,0 +1,17 @@
+# Downloaded ZIP files
+data/downloads/*.zip
+
+# Extracted shapefiles (large binary files)
+data/shapefiles/
+
+# Reference PDFs
+data/reference-pdfs/
+
+# Keep extracted text/excel files in downloads
+!data/downloads/majorcoals/
+!data/downloads/minorcoals/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
