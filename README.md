@@ -39,8 +39,10 @@ python3 filter_study_area.py
 ```
 coalgas/
 ├── README.md                    # This file
+├── DATA_SOURCES.md              # Complete data acquisition guide
 ├── filter_study_area.py         # Script to filter data to 6 counties
 ├── summarize_coal_data.py       # Generate summary statistics
+├── examples/                    # Sample data files (50 rows each)
 ├── data/
 │   ├── csv/                     # Processed CSV files (68 MB)
 │   └── downloads/               # Source data files (132 MB)
@@ -132,10 +134,21 @@ Generates summary statistics for CBM assessment.
 | [`2025-01-04-crawford-county-cbm-data-acquisition.md`](thoughts/shared/plans/2025-01-04-crawford-county-cbm-data-acquisition.md) | Full implementation plan with verification steps |
 | [`2025-01-04-cbm-data-acquisition-handoff.md`](thoughts/shared/handoffs/2025-01-04-cbm-data-acquisition-handoff.md) | Handoff notes and context |
 
+## Example Data
+
+The [`examples/`](examples/) directory contains sample files (50 rows each) for quick inspection:
+
+| File | Description |
+|------|-------------|
+| [`major-coals-sample.csv`](examples/major-coals-sample.csv) | Sample major coals drill hole data |
+| [`minor-coals-sample.csv`](examples/minor-coals-sample.csv) | Sample minor coals drill hole data |
+| [`herrin-depth-sample.csv`](examples/herrin-depth-sample.csv) | Sample Herrin Coal depth contours |
+
 ## Data Sources
 
-All data sourced from Illinois State Geological Survey (ISGS):
+See [`DATA_SOURCES.md`](DATA_SOURCES.md) for complete download instructions and data documentation.
 
+**Quick Links**:
 - **ILMINES Wiki**: https://ilmineswiki.web.illinois.edu/
 - **Major Coals Dataset**: [58,000+ drill holes](https://wikiimage.isgs.illinois.edu/ilmines/webfiles/shapefiles/majorcoals-stratdata-ascii.zip)
 - **Minor Coals Dataset**: [12,000+ drill holes](https://wikiimage.isgs.illinois.edu/ilmines/webfiles/shapefiles/minorcoals-stratdata-ascii.zip)
