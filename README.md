@@ -16,12 +16,12 @@ Explore drill hole locations and coal seam data with interactive HTML maps:
 
 | Map | Description |
 |-----|-------------|
-| [All Seams Combined](visualizations/interactive/all-seams-map.html) | Overview of all coal seams |
-| [Herrin Coal](visualizations/interactive/herrin-map.html) | Herrin (No. 6) Coal drill holes |
-| [Springfield Coal](visualizations/interactive/springfield-map.html) | Springfield (No. 5) Coal drill holes |
-| [Danville Coal](visualizations/interactive/danville-map.html) | Danville (No. 7) Coal drill holes |
-| [Colchester Coal](visualizations/interactive/colchester-map.html) | Colchester (No. 2) Coal drill holes |
-| [Seelyville Coal](visualizations/interactive/seelyville-map.html) | Seelyville Coal drill holes |
+| [All Seams Combined](https://pyrex41.github.io/coalgas/visualizations/interactive/all-seams-map.html) | Overview of all coal seams |
+| [Herrin Coal](https://pyrex41.github.io/coalgas/visualizations/interactive/herrin-map.html) | Herrin (No. 6) Coal drill holes |
+| [Springfield Coal](https://pyrex41.github.io/coalgas/visualizations/interactive/springfield-map.html) | Springfield (No. 5) Coal drill holes |
+| [Danville Coal](https://pyrex41.github.io/coalgas/visualizations/interactive/danville-map.html) | Danville (No. 7) Coal drill holes |
+| [Colchester Coal](https://pyrex41.github.io/coalgas/visualizations/interactive/colchester-map.html) | Colchester (No. 2) Coal drill holes |
+| [Seelyville Coal](https://pyrex41.github.io/coalgas/visualizations/interactive/seelyville-map.html) | Seelyville Coal drill holes |
 
 ### Static Plots
 
