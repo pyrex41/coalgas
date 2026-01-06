@@ -67,10 +67,10 @@ def create_seam_points(holes: list[DrillHole], seam_key: str,
         seam_rel_elev = (seam_abs_elev - base_elevation) * 0.3048 * vertical_exag
 
         # Column height represents seam thickness
-        # Scale: 1 ft thickness = 100 meters visual height (for visibility)
-        # This makes a 4 ft seam = 400m tall, 1 ft seam = 100m tall
-        thickness_ft = h.thickness or 0.5  # Default 0.5 ft if missing
-        column_height = thickness_ft * 100  # 100 meters per foot of thickness
+        # Scale: 1 ft thickness = 200 meters visual height (exaggerated for visibility)
+        # This makes a 4 ft seam = 800m tall, 1 ft seam = 200m tall
+        thickness_ft = h.thickness if h.thickness and h.thickness > 0 else 0.5
+        column_height = thickness_ft * 200  # 200 meters per foot of thickness
 
         data.append({
             'position': [h.lon, h.lat],
@@ -88,13 +88,13 @@ def create_seam_points(holes: list[DrillHole], seam_key: str,
         get_position='position',
         get_elevation='elevation',
         get_fill_color='color',
-        get_line_color=[0, 0, 0, 50],
-        radius=200,  # Radius in meters
+        get_line_color=[0, 0, 0, 80],
+        radius=80,  # Smaller radius so columns don't overlap
         elevation_scale=1,
         extruded=True,
         pickable=True,
         auto_highlight=True,
-        coverage=0.9,
+        coverage=1.0,
         id=f'seam-{seam_key}',
     )
 
