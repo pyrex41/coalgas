@@ -46,8 +46,9 @@ SEAM_COLORS_PLOTLY = {
 
 
 def create_seam_points(holes: list[DrillHole], seam_key: str,
-                       vertical_exag: float = DEFAULT_VERTICAL_EXAGGERATION) -> pdk.Layer:
-    """Create point layer showing where drill holes intersect a seam"""
+                       vertical_exag: float = DEFAULT_VERTICAL_EXAGGERATION,
+                       base_elevation: float = 0) -> pdk.Layer:
+    """Create column layer showing where drill holes intersect a seam (as short columns at depth)"""
     seam = SEAMS[seam_key]
     color = SEAM_COLORS_3D[seam_key]
     seam_name = seam['name']
@@ -59,39 +60,45 @@ def create_seam_points(holes: list[DrillHole], seam_key: str,
         if h.is_outlier:
             continue
 
-        # Seam top elevation = surface elevation - depth
-        seam_elev = (h.surfelv - h.depth) * vertical_exag
+        # Calculate elevation relative to base, then apply vertical exaggeration
+        # Depth is positive (feet below surface), so seam is at (surfelv - depth)
+        seam_abs_elev = h.surfelv - h.depth  # Absolute elevation in feet
+        # Convert to relative elevation from base, in meters, with exaggeration
+        seam_rel_elev = (seam_abs_elev - base_elevation) * 0.3048 * vertical_exag
 
-        # Size based on thickness
-        size = 100  # default
-        if h.thickness is not None and h.thickness > 0:
-            size = max(50, min(300, h.thickness * 50))
+        # Thickness of seam in meters with exaggeration
+        thick = (h.thickness or 2) * 0.3048 * vertical_exag
 
         data.append({
-            'position': [h.lon, h.lat, seam_elev],
+            'position': [h.lon, h.lat],
+            'elevation': seam_rel_elev,
+            'height': max(thick, 20),  # Minimum height for visibility in meters
             'thickness': h.thickness or 0,
             'depth': h.depth,
             'seam': seam_name,
             'color': color,
-            'size': size,
         })
 
     return pdk.Layer(
-        'ScatterplotLayer',
+        'ColumnLayer',
         data=data,
         get_position='position',
+        get_elevation='elevation',
         get_fill_color='color',
-        get_radius='size',
-        radius_scale=1,
-        radius_min_pixels=3,
-        radius_max_pixels=15,
+        get_line_color=[0, 0, 0, 50],
+        radius=200,  # Radius in meters
+        elevation_scale=1,
+        extruded=True,
         pickable=True,
+        auto_highlight=True,
+        coverage=0.9,
         id=f'seam-{seam_key}',
     )
 
 
 def create_drillhole_columns(all_holes: dict[str, list[DrillHole]],
-                             vertical_exag: float = DEFAULT_VERTICAL_EXAGGERATION) -> pdk.Layer:
+                             vertical_exag: float = DEFAULT_VERTICAL_EXAGGERATION,
+                             base_elevation: float = 0) -> pdk.Layer:
     """Create ColumnLayer showing drill holes as vertical lines from surface to deepest seam"""
 
     # Collect all unique drill hole locations with their data
@@ -128,17 +135,21 @@ def create_drillhole_columns(all_holes: dict[str, list[DrillHole]],
     # Build layer data
     data = []
     for info in hole_data.values():
-        # Column goes from min_elev to surface
-        column_height = (info['surfelv'] - info['min_elev']) * vertical_exag
-        if column_height < 10:  # Skip if no meaningful depth data
+        # Column goes from min_elev to surface (height in feet)
+        column_height_ft = info['surfelv'] - info['min_elev']
+        if column_height_ft < 10:  # Skip if no meaningful depth data
             continue
+
+        # Convert to meters with exaggeration
+        column_height_m = column_height_ft * 0.3048 * vertical_exag
+        min_elev_m = (info['min_elev'] - base_elevation) * 0.3048 * vertical_exag
 
         seam_list = ', '.join(s['name'] for s in info['seams'])
 
         data.append({
             'position': [info['lon'], info['lat']],
-            'elevation': info['min_elev'] * vertical_exag,
-            'height': column_height,
+            'elevation': min_elev_m,
+            'height': column_height_m,
             'seams': seam_list,
             'surfelv': info['surfelv'],
         })
@@ -148,8 +159,10 @@ def create_drillhole_columns(all_holes: dict[str, list[DrillHole]],
         data=data,
         get_position='position',
         get_elevation='elevation',
-        get_fill_color=[100, 100, 100, 120],  # Semi-transparent gray
-        radius=30,
+        get_fill_color=[150, 150, 150, 80],  # Semi-transparent gray
+        get_line_color=[100, 100, 100, 150],
+        radius=100,  # Radius in meters
+        elevation_scale=1,
         extruded=True,
         pickable=True,
         auto_highlight=True,
@@ -186,10 +199,15 @@ def create_3d_terrain_view(all_holes: dict[str, list[DrillHole]],
                            output_path: str = 'visualizations/interactive/3d-terrain.html'):
     """Create full 3D terrain view with all seams"""
 
-    # Calculate map center from all data
+    # Calculate map center and base elevation from all data
     all_valid = []
+    all_elevations = []
     for holes in all_holes.values():
-        all_valid.extend([h for h in holes if h.depth is not None and not h.is_outlier])
+        for h in holes:
+            if h.depth is not None and not h.is_outlier and h.surfelv is not None:
+                all_valid.append(h)
+                all_elevations.append(h.surfelv - h.depth)  # Seam elevation
+                all_elevations.append(h.surfelv)  # Surface elevation
 
     if not all_valid:
         print("  No valid data for 3D view")
@@ -198,19 +216,24 @@ def create_3d_terrain_view(all_holes: dict[str, list[DrillHole]],
     center_lat = sum(h.lat for h in all_valid) / len(all_valid)
     center_lon = sum(h.lon for h in all_valid) / len(all_valid)
 
+    # Use minimum elevation as base (so everything renders above 0)
+    base_elevation = min(all_elevations) - 100  # 100 ft buffer below lowest point
+    max_elevation = max(all_elevations)
+
     print(f"  Center: ({center_lat:.4f}, {center_lon:.4f}), {len(all_valid)} points")
+    print(f"  Elevation range: {base_elevation:.0f} to {max_elevation:.0f} ft")
 
     # Create layers
     layers = []
 
     # Add drill hole columns first (rendered at bottom)
-    columns_layer = create_drillhole_columns(all_holes, vertical_exag)
+    columns_layer = create_drillhole_columns(all_holes, vertical_exag, base_elevation)
     layers.append(columns_layer)
 
     # Add seam layers (rendered on top of columns)
     for seam_key in SEAMS:
         if seam_key in all_holes:
-            layer = create_seam_points(all_holes[seam_key], seam_key, vertical_exag)
+            layer = create_seam_points(all_holes[seam_key], seam_key, vertical_exag, base_elevation)
             layers.append(layer)
 
     # Set up view state
