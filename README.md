@@ -8,6 +8,36 @@ This repository contains drill hole data and analysis scripts for evaluating CBM
 
 **Study Area Counties**: Crawford, Clark, Lawrence, Jasper, Cumberland, Richland
 
+## Visualizations
+
+### Interactive Maps
+
+Explore drill hole locations and coal seam data with interactive HTML maps:
+
+| Map | Description |
+|-----|-------------|
+| [All Seams Combined](visualizations/interactive/all-seams-map.html) | Overview of all coal seams |
+| [Herrin Coal](visualizations/interactive/herrin-map.html) | Herrin (No. 6) Coal drill holes |
+| [Springfield Coal](visualizations/interactive/springfield-map.html) | Springfield (No. 5) Coal drill holes |
+| [Danville Coal](visualizations/interactive/danville-map.html) | Danville (No. 7) Coal drill holes |
+| [Colchester Coal](visualizations/interactive/colchester-map.html) | Colchester (No. 2) Coal drill holes |
+| [Seelyville Coal](visualizations/interactive/seelyville-map.html) | Seelyville Coal drill holes |
+
+### Static Plots
+
+| Seam | Thickness Map | Depth Map | Histogram |
+|------|---------------|-----------|-----------|
+| Herrin | ![](visualizations/static/herrin-thickness-map.png) | ![](visualizations/static/herrin-depth-map.png) | ![](visualizations/static/herrin-histogram.png) |
+| Springfield | ![](visualizations/static/springfield-thickness-map.png) | ![](visualizations/static/springfield-depth-map.png) | ![](visualizations/static/springfield-histogram.png) |
+| Danville | ![](visualizations/static/danville-thickness-map.png) | ![](visualizations/static/danville-depth-map.png) | ![](visualizations/static/danville-histogram.png) |
+| Colchester | ![](visualizations/static/colchester-thickness-map.png) | ![](visualizations/static/colchester-depth-map.png) | ![](visualizations/static/colchester-histogram.png) |
+| Seelyville | ![](visualizations/static/seelyville-thickness-map.png) | ![](visualizations/static/seelyville-depth-map.png) | ![](visualizations/static/seelyville-histogram.png) |
+
+To regenerate visualizations:
+```bash
+python visualize_coal_data.py
+```
+
 ## Quick Start
 
 ```bash
@@ -42,7 +72,11 @@ coalgas/
 ├── DATA_SOURCES.md              # Complete data acquisition guide
 ├── filter_study_area.py         # Script to filter data to 6 counties
 ├── summarize_coal_data.py       # Generate summary statistics
+├── visualize_coal_data.py       # Generate maps and plots
 ├── examples/                    # Sample data files (50 rows each)
+├── visualizations/
+│   ├── interactive/             # Interactive HTML maps (Folium)
+│   └── static/                  # PNG plots (thickness, depth, histograms)
 ├── data/
 │   ├── csv/                     # Processed CSV files (68 MB)
 │   └── downloads/               # Source data files (132 MB)
