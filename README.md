@@ -23,6 +23,17 @@ Explore drill hole locations and coal seam data with interactive HTML maps:
 | [Colchester Coal](https://pyrex41.github.io/coalgas/visualizations/interactive/colchester-map.html) | Colchester (No. 2) Coal drill holes |
 | [Seelyville Coal](https://pyrex41.github.io/coalgas/visualizations/interactive/seelyville-map.html) | Seelyville Coal drill holes |
 
+### 3D Visualizations
+
+Explore coal seams in 3D with depth-accurate subsurface rendering:
+
+| View | Description |
+|------|-------------|
+| [3D Terrain View](https://pyrex41.github.io/coalgas/visualizations/interactive/3d-terrain.html) | Rotatable 3D view of all seams below surface |
+| [Cross-Section (E-W)](https://pyrex41.github.io/coalgas/visualizations/interactive/cross-section.html) | East-West vertical slice through the study area |
+| [Cross-Section (N-S)](https://pyrex41.github.io/coalgas/visualizations/interactive/cross-section-ns.html) | North-South vertical slice |
+| [Cross-Section (NW-SE)](https://pyrex41.github.io/coalgas/visualizations/interactive/cross-section-nwse.html) | Diagonal transect |
+
 ### Static Plots
 
 | Seam | Thickness Map | Depth Map | Histogram |
@@ -35,7 +46,16 @@ Explore drill hole locations and coal seam data with interactive HTML maps:
 
 To regenerate visualizations:
 ```bash
+# 2D maps and plots
 python visualize_coal_data.py
+
+# 3D visualizations
+python visualize_3d.py
+
+# 3D with custom settings
+python visualize_3d.py --exag 20                    # 20x vertical exaggeration
+python visualize_3d.py --skip-3d                    # Only generate cross-sections
+python visualize_3d.py --transect-start "-88.0,39.0" --transect-end "-87.5,39.0"
 ```
 
 ## Quick Start
@@ -72,7 +92,8 @@ coalgas/
 ├── DATA_SOURCES.md              # Complete data acquisition guide
 ├── filter_study_area.py         # Script to filter data to 6 counties
 ├── summarize_coal_data.py       # Generate summary statistics
-├── visualize_coal_data.py       # Generate maps and plots
+├── visualize_coal_data.py       # Generate 2D maps and plots
+├── visualize_3d.py              # Generate 3D terrain and cross-section views
 ├── examples/                    # Sample data files (50 rows each)
 ├── visualizations/
 │   ├── interactive/             # Interactive HTML maps (Folium)
@@ -160,6 +181,16 @@ Generates summary statistics for CBM assessment.
 - Shows Crawford County-specific statistics
 - Creates combined CSV merging major and minor coal data
 - Outputs CBM potential assessment summary
+
+### [`visualize_3d.py`](visualize_3d.py)
+
+Generates 3D coal seam visualizations.
+
+- **3D terrain view** (pydeck): Rotatable 3D map with drill holes as columns and seam intersections at depth
+- **Cross-section views** (Plotly): Vertical slices showing surface profile and coal seam layers
+- Configurable vertical exaggeration (default 10x)
+- Custom transect lines supported via CLI arguments
+- Outputs standalone HTML files with interactive controls
 
 ## Documentation
 

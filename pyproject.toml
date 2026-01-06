@@ -1,0 +1,18 @@
+[project]
+name = "coalgas"
+version = "0.1.0"
+description = "Crawford County CBM data acquisition and visualization"
+requires-python = ">=3.10"
+dependencies = [
+    "matplotlib>=3.8",
+    "folium>=0.15",
+    "shapely>=2.0",
+    "pyshp>=2.3",
+    "pydeck>=0.9",
+    "plotly>=5.18",
+    "numpy>=1.24",
+    "scipy>=1.11",
+]
+
+[dependency-groups]
+dev = []
