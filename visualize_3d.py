@@ -73,8 +73,8 @@ def create_seam_points(holes: list[DrillHole], seam_key: str,
             'position': [h.lon, h.lat],
             'elevation': seam_rel_elev,
             'height': max(thick, 20),  # Minimum height for visibility in meters
-            'thickness': h.thickness or 0,
-            'depth': h.depth,
+            'thickness': round(h.thickness, 1) if h.thickness else 0,
+            'depth': round(h.depth),
             'seam': seam_name,
             'color': color,
         })
@@ -146,11 +146,16 @@ def create_drillhole_columns(all_holes: dict[str, list[DrillHole]],
 
         seam_list = ', '.join(s['name'] for s in info['seams'])
 
+        # Get max depth for tooltip
+        max_depth = max((s['depth'] for s in info['seams']), default=0)
+
         data.append({
             'position': [info['lon'], info['lat']],
             'elevation': min_elev_m,
             'height': column_height_m,
-            'seams': seam_list,
+            'seam': f"Drill Hole ({len(info['seams'])} seams)",
+            'thickness': 0,  # N/A for drill holes
+            'depth': round(max_depth) if max_depth else 0,
             'surfelv': info['surfelv'],
         })
 
@@ -246,14 +251,19 @@ def create_3d_terrain_view(all_holes: dict[str, list[DrillHole]],
     )
 
     # Create deck - using open map style (no Mapbox token needed)
+    # Use a flexible tooltip that handles both seam and drillhole data
     deck = pdk.Deck(
         layers=layers,
         initial_view_state=view_state,
         map_style='https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
         tooltip={
-            'html': '<b>Seam:</b> {seam}<br>'
-                    '<b>Thickness:</b> {thickness:.1f} ft<br>'
-                    '<b>Depth:</b> {depth:.0f} ft',
+            'html': '''
+                <div style="font-family: Arial, sans-serif;">
+                    <b>{seam}</b><br/>
+                    Thickness: {thickness} ft<br/>
+                    Depth: {depth} ft
+                </div>
+            ''',
             'style': {'backgroundColor': 'steelblue', 'color': 'white'}
         }
     )
